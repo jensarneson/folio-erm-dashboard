@@ -33,5 +33,4 @@ The renewal priority is auto-mapped from the decision:
 
 ## Related
 
-- ADR-005 (Supplementary Property Filtering)
-- ADR-008 (EKU Tenant API Findings)
+- ADR-003 (Direct API vs. Backend Proxy)
