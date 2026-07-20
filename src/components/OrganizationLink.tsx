@@ -27,7 +27,7 @@ export function OrganizationLink({ org, roleLabels, isPrimary }: {
 
   return (
     <a
-      href={`${folioUiBase}/erm/organizations/${orgId}`}
+      href={`${folioUiBase}/organizations/view/${orgId}`}
       target="_blank"
       rel="noopener noreferrer"
       className={styles.link}
