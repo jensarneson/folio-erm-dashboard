@@ -2,9 +2,39 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 
+// CSP for dev/preview — no 'unsafe-eval', connect-src covers FOLIO API
+const CSP_HEADER = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  "connect-src https://*.folio.ebsco.com https://*.folio.org",
+  "frame-ancestors 'none'",
+].join('; ')
+
 export default defineConfig({
   plugins: [
     react(),
+    {
+      name: 'security-headers',
+      configureServer(server) {
+        server.middlewares.use((_req, res, next) => {
+          res.setHeader('Content-Security-Policy', CSP_HEADER)
+          res.setHeader('X-Content-Type-Options', 'nosniff')
+          res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+          next()
+        })
+      },
+      configurePreviewServer(server) {
+        server.middlewares.use((_req, res, next) => {
+          res.setHeader('Content-Security-Policy', CSP_HEADER)
+          res.setHeader('X-Content-Type-Options', 'nosniff')
+          res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+          next()
+        })
+      },
+    },
     {
       name: 'redirect-base-no-trailing-slash',
       configureServer(server) {

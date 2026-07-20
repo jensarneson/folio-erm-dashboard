@@ -2,7 +2,6 @@ node_modules
 dist
 .env
 .env.local
-scripts/
 .pi/
 CONTEXT.md
 PROJECT_PLAN.md

@@ -1,47 +1,14 @@
 # Agent Quick Reference
 
-## Auth Helper
+## Authentication
 
-Always use the auth helper script when testing the API outside the browser:
+The app authenticates entirely through the browser login page. Users enter their
+FOLIO credentials and the token is stored in `localStorage`. No server-side auth
+or CLI scripts are needed.
 
-```bash
-cd /home/jens/EKU/folio-erm-dashboard
-npx vite-node scripts/auth.ts
-```
-
-This authenticates with FOLIO and saves credentials to `.env`.
-
-**Required env var:** `VITE_PASSWORD`
-
-**Optional env vars:** `VITE_OKAPI_URL`, `VITE_TENANT`, `VITE_USERNAME`
-
-```bash
-VITE_PASSWORD=YourPass123! npx vite-node scripts/auth.ts
-```
-
-## API Testing
-
-After auth, write a quick test file and run it with vite-node:
-
-```bash
-cat > /tmp/test.ts << 'EOF'
-import * as okapi from './src/lib/okapi'
-import * as folioApi from './src/lib/folioApi'
-
-okapi.login({
-  okapiUrl: process.env.VITE_OKAPI_URL || 'https://api-eku.folio.ebsco.com',
-  tenant: process.env.VITE_TENANT || 'fs00001224',
-  username: process.env.VITE_USERNAME!,
-  password: process.env.VITE_PASSWORD!,
-}).then(async () => {
-  const result = await folioApi.getAgreements({ page: 1, perPage: 50 })
-  console.log('totalRecords:', result.totalRecords)
-  console.log('page 1 count:', result.agreements.length)
-}).catch(e => console.error('Error:', e.message))
-EOF
-
-npx vite-node /tmp/test.ts
-```
+For API testing outside the browser, make direct `fetch()` calls to the Okapi
+gateway — the `login()` function in `src/lib/okapi.ts` works in any environment
+with `fetch` and `localStorage` (or a polyfill).
 
 ## Key Files
 
@@ -51,8 +18,7 @@ npx vite-node /tmp/test.ts
 | `src/lib/folioApi.ts` | ERM API calls (`getAgreements`, `getAllAgreements`, `getCustprops`) |
 | `src/lib/agreementHelpers.ts` | Client-side filtering logic |
 | `src/pages/Dashboard.tsx` | Main dashboard with `useQuery` hooks |
-| `scripts/auth.ts` | Auth helper for testing |
-| `.env` | Default credentials |
+| `.env` | Non-sensitive defaults (Okapi URL, tenant) |
 
 ## Token Refresh
 

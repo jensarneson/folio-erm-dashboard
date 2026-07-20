@@ -41,22 +41,8 @@ login() → okapiToken (valid ~16h) + refreshToken
 
 ## Testing
 
-When the agent needs to test the API outside the browser, use the auth helper script:
-
-```bash
-npx vite-node scripts/auth.ts
-```
-
-This authenticates using the credentials in `.env` and saves them. For API testing:
-
-```bash
-npx vite-node scripts/auth.ts && npx vite-node <your-test-file.ts>
-```
-
-Set environment variables to override defaults:
-```bash
-VITE_USERNAME=foo VITE_PASSWORD=bar npx vite-node scripts/auth.ts
-```
+API testing outside the browser requires a `fetch` + `localStorage` environment.
+The `login()` function in `src/lib/okapi.ts` works directly — no helper script needed.
 
 ## Alternatives Considered
 
@@ -67,4 +53,3 @@ VITE_USERNAME=foo VITE_PASSWORD=bar npx vite-node scripts/auth.ts
 ## Related
 
 - ADR-002 (Deployment Target)
-- `scripts/auth.ts` (auth helper for testing)

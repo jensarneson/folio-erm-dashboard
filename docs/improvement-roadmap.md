@@ -7,7 +7,7 @@
 
 ## Phase 1 — Security & Correctness (Critical)
 
-- [x] **1.1** Remove plaintext password from `scripts/auth.ts` — require env vars only
+- [x] **1.1** Remove `scripts/auth.ts` — broken in Node (localStorage dependency), not used by the app
 - [x] **1.2** Remove password from `localStorage` — store only username/tenant/config
 - [x] **1.3** Fix query key mismatch in optimistic update (`effectiveReviewDateName` vs `serverFilter`)
 - [x] **1.4** Remove stale `['summary']` query invalidation (no such query exists)
@@ -42,9 +42,10 @@
 
 ### 2025-07-20 — Phase 1: Security & Correctness
 
-#### 1.1 — Removed hardcoded password from `scripts/auth.ts`
-- Password now required via `VITE_PASSWORD` env var with no fallback default
-- Script exits with usage message if env var is missing
+#### 1.1 — Removed `scripts/auth.ts`
+- Script was broken: `login()` depends on `localStorage` which is unavailable in Node
+- App authenticates through the browser login page — no CLI auth needed
+- Removed `test:api` script from `package.json` (referenced deleted `scripts/test-api.ts`)
 
 #### 1.2 — Removed password from `localStorage`
 - `OkapiCredentials` no longer includes password in stored config
@@ -98,7 +99,7 @@
 - Zero inline `style={}` objects remaining in components
 - Added CSS module type declarations to `vite-env.d.ts`
 
-#### 3.3 — Removed 7 one-off debug scripts
-- Kept only `scripts/auth.ts` (referenced in docs)
-- Removed: `check-env.ts`, `check-response.ts`, `debug.ts`,
-  `test-all-custprops.ts`, `test-custprops.ts`, `test-fetch.ts`, `test-getall.ts`
+#### 3.3 — Removed all one-off scripts
+- Removed entire `scripts/` directory (`auth.ts`, `check-env.ts`, `check-response.ts`,
+  `debug.ts`, `test-all-custprops.ts`, `test-custprops.ts`, `test-fetch.ts`, `test-getall.ts`)
+- Removed `scripts/` from `.gitignore`
