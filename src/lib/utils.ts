@@ -7,10 +7,9 @@ export function getFiscalYearDates(year: number): { start: string; end: string }
   return { start, end }
 }
 
-export function getCurrentFiscalYear(): number {
-  const now = new Date()
-  const month = now.getMonth() + 1 // 1-12
-  const year = now.getFullYear()
+export function getCurrentFiscalYear(date: Date = new Date()): number {
+  const month = date.getMonth() + 1 // 1-12
+  const year = date.getFullYear()
   // FY is named after the ending year.
   // FY27 = July 1, 2026 – June 30, 2027
   // If we're in July or later, the FY ends next calendar year

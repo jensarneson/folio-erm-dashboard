@@ -2,6 +2,7 @@
   "name": "folio-erm-dashboard",
   "private": true,
   "version": "0.1.0",
+  "type": "module",
   "description": "FOLIO ERM Dashboard — Rubric Review Queue for academic library",
   "scripts": {
     "dev": "vite",

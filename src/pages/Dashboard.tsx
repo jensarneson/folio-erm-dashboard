@@ -28,7 +28,7 @@ import {
 } from '../lib/agreementHelpers'
 import type { Agreement } from '../lib/folioApi'
 import { useQueryClient } from '@tanstack/react-query'
-import { getToken, clearToken } from '../lib/okapi'
+import { getToken, clearToken, getFolioUiBaseUrl } from '../lib/okapi'
 
 const REVIEW_DATE_PROP_NAME = 'rubricreview'
 const REVIEW_DECISION_PROP_NAME = 'rubricscore'
@@ -227,6 +227,7 @@ function ReviewQueueTable({
   effectiveReviewDecisionName,
   decisionOptions,
   savingAgreementId,
+  folioUiBase,
 }: {
   sortedQueue: Agreement[]
   editingId: string | null
@@ -241,6 +242,7 @@ function ReviewQueueTable({
   effectiveReviewDecisionName: string
   decisionOptions: { id: string; value: string; label: string }[]
   savingAgreementId: string | null
+  folioUiBase: string
 }) {
   return (
     <div style={styles.tableContainer}>
@@ -265,7 +267,7 @@ function ReviewQueueTable({
               <tr key={agreement.id} style={{ ...styles.tr, ...(isSaving ? styles.savingRow : {}) }}>
                 <td style={styles.td}>
                   <a
-                    href={`https://eku.folio.ebsco.com/erm/agreements/${agreement.id}`}
+                    href={`${folioUiBase}/erm/agreements/${agreement.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={styles.agreementLink}
@@ -334,10 +336,11 @@ function ReviewQueueTable({
   )
 }
 
-function DecidedTable({ sortedDecided, effectiveLastReviewName, effectiveReviewDecisionName }: {
+function DecidedTable({ sortedDecided, effectiveLastReviewName, effectiveReviewDecisionName, folioUiBase }: {
   sortedDecided: Agreement[]
   effectiveLastReviewName: string
   effectiveReviewDecisionName: string
+  folioUiBase: string
 }) {
   return (
     <div style={styles.tableContainer}>
@@ -355,18 +358,13 @@ function DecidedTable({ sortedDecided, effectiveLastReviewName, effectiveReviewD
           {sortedDecided.map((agreement) => {
             const lastReviewDate = getLastReviewDate(agreement, effectiveLastReviewName)
             const decisionValue = getDecisionValue(agreement, effectiveReviewDecisionName)
-            const decisionColor = !decisionValue ? 'var(--color-text-secondary)' :
-              decisionValue === 'cancel' ? 'var(--color-danger)' :
-              decisionValue === 'watch' ? 'var(--color-warning)' : 'var(--color-success)'
-            const decisionLabel = !decisionValue ? '—' :
-              decisionValue === 'renew' ? 'RENEW' :
-              decisionValue === 'watch' ? 'WATCH' : 'CANCEL'
+            const decisionInfo = decisionValue ? getDecisionLabel(decisionValue) : { label: '—', color: 'var(--color-text-secondary)' }
 
             return (
               <tr key={agreement.id} style={styles.tr}>
                 <td style={styles.td}>
                   <a
-                    href={`https://eku.folio.ebsco.com/erm/agreements/${agreement.id}`}
+                    href={`${folioUiBase}/erm/agreements/${agreement.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={styles.agreementLink}
@@ -378,8 +376,8 @@ function DecidedTable({ sortedDecided, effectiveLastReviewName, effectiveReviewD
                   {lastReviewDate ? new Date(lastReviewDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}
                 </td>
                 <td style={styles.td}>
-                  <span style={{ ...styles.statusBadge, borderColor: decisionColor, color: decisionColor }}>
-                    {decisionLabel}
+                  <span style={{ ...styles.statusBadge, borderColor: decisionInfo.color, color: decisionInfo.color }}>
+                    {decisionInfo.label}
                   </span>
                 </td>
                 <td style={{ ...styles.td, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={agreement.description || undefined}>
@@ -429,6 +427,8 @@ export default function Dashboard() {
   const [selectedFY, setSelectedFY] = useState<number>(getCurrentFiscalYear())
   const { start: fyStart, end: fyEnd } = getFiscalYearDates(selectedFY)
 
+  const folioUiBase = getFolioUiBaseUrl()
+
   // Fetch supplementary properties
   const { data: custprops, isLoading: loadingCustprops, error: custpropsError } = useQuery({
     queryKey: ['custprops'],
@@ -471,13 +471,10 @@ export default function Dashboard() {
     ? `customProperties.${effectiveReviewDateName}.value isSet`
     : undefined
 
-  console.log('[Dashboard] custprops loaded:', !!custprops, 'reviewDateProp:', reviewDateProp?.name, 'serverFilter:', serverFilter)
-
   // Fetch agreements with rubricreview set, sorted by name
   const { data: allAgreements, isLoading: loadingAgreements } = useQuery({
     queryKey: ['all-agreements', serverFilter],
     queryFn: () => {
-      console.log('[Dashboard] Fetching agreements with filter:', serverFilter)
       return getAllAgreements({
         filter: serverFilter!,
         sort: 'name;asc',
@@ -623,7 +620,7 @@ export default function Dashboard() {
 
   const sortedDecided = sortDecidedAgreements(
     decidedAgreements,
-    effectiveReviewDateName
+    effectiveLastReviewName
   )
 
   const handleLogout = () => {
@@ -748,6 +745,7 @@ export default function Dashboard() {
             effectiveReviewDecisionName={effectiveReviewDecisionName}
             decisionOptions={decisionOptions}
             savingAgreementId={savingAgreementId}
+            folioUiBase={folioUiBase}
           />
         )}
       </section>
@@ -777,6 +775,7 @@ export default function Dashboard() {
             sortedDecided={sortedDecided}
             effectiveLastReviewName={effectiveLastReviewName}
             effectiveReviewDecisionName={effectiveReviewDecisionName}
+            folioUiBase={folioUiBase}
           />
         )}
       </section>
@@ -838,17 +837,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '0.875rem',
     fontWeight: 600,
     cursor: 'pointer',
-  },
-  refreshButtonDisabled: {
-    padding: '0.5rem 1rem',
-    background: 'var(--color-accent-light)',
-    color: 'var(--color-text-secondary)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--radius)',
-    fontSize: '0.875rem',
-    fontWeight: 600,
-    cursor: 'not-allowed',
-    opacity: 0.6,
   },
   fySelector: {
     display: 'flex',

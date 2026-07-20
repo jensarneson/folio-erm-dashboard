@@ -1,4 +1,5 @@
 import type { Agreement, CustomPropertyDefinition } from './folioApi'
+import { getCurrentFiscalYear } from './utils'
 
 // ─── Custom Property Accessors ────────────────────────────────────────────────
 // All custom property access follows the same pattern:
@@ -62,21 +63,19 @@ export function findPropertyByName(
 
 // ─── Review Date Helpers ─────────────────────────────────────────────────────
 
-/** Extract a date string from a custom property (e.g. rubricreview) */
-export function getReviewDate(
+/** Extract a date string from a custom property (e.g. rubricreview, lastrubricreview) */
+export function getDateProperty(
   agreement: Agreement,
   propName: string
 ): string | null {
   return getCustomPropertyString(agreement, propName)
 }
 
-/** Extract last review date string from a custom property */
-export function getLastReviewDate(
-  agreement: Agreement,
-  propName: string
-): string | null {
-  return getCustomPropertyString(agreement, propName)
-}
+/** @deprecated use getDateProperty instead */
+export const getReviewDate = getDateProperty
+
+/** @deprecated use getDateProperty instead */
+export const getLastReviewDate = getDateProperty
 
 // ─── Fiscal Year Helpers ─────────────────────────────────────────────────────
 
@@ -85,9 +84,7 @@ export function getLastReviewDate(
  * FY is named after the ending year: FY27 = July 2026 – June 2027
  */
 export function getFiscalYearFromDate(date: Date): number {
-  const month = date.getMonth() + 1 // 1-12
-  const year = date.getFullYear()
-  return month >= 7 ? year + 1 : year
+  return getCurrentFiscalYear(date)
 }
 
 // ─── Decision Helpers ────────────────────────────────────────────────────────

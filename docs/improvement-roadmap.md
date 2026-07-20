@@ -11,17 +11,17 @@
 - [x] **1.2** Remove password from `localStorage` — store only username/tenant/config
 - [x] **1.3** Fix query key mismatch in optimistic update (`effectiveReviewDateName` vs `serverFilter`)
 - [x] **1.4** Remove stale `['summary']` query invalidation (no such query exists)
-- [ ] **1.5** Derive FOLIO UI base URL from Okapi config instead of hardcoding `eku.folio.ebsco.com`
+- [x] **1.5** Derive FOLIO UI base URL from Okapi config instead of hardcoding `eku.folio.ebsco.com`
 
 ## Phase 2 — Cleanup (Medium)
 
-- [ ] **2.1** Remove all `console.log` statements from production code
-- [ ] **2.2** Deduplicate `getFiscalYearFromDate` / `getCurrentFiscalYear` logic
-- [ ] **2.3** Consolidate `getReviewDate` / `getLastReviewDate` into single helper
-- [ ] **2.4** Use `getDecisionLabel()` in `DecidedTable` instead of manual ternary mapping
-- [ ] **2.5** Fix `sortDecidedAgreements` to sort by last review date, not next review date
-- [ ] **2.6** Add `"type": "module"` to `package.json` to fix ESLint warning
-- [ ] **2.7** Remove unused `refreshButtonDisabled` style
+- [x] **2.1** Remove all `console.log` statements from production code
+- [x] **2.2** Deduplicate `getFiscalYearFromDate` / `getCurrentFiscalYear` logic
+- [x] **2.3** Consolidate `getReviewDate` / `getLastReviewDate` into single helper
+- [x] **2.4** Use `getDecisionLabel()` in `DecidedTable` instead of manual ternary mapping
+- [x] **2.5** Fix `sortDecidedAgreements` to sort by last review date, not next review date
+- [x] **2.6** Add `"type": "module"` to `package.json` to fix ESLint warning
+- [x] **2.7** Remove unused `refreshButtonDisabled` style
 
 ## Phase 3 — Maintainability (Nice-to-have)
 
@@ -60,6 +60,28 @@
 - Two `invalidateQueries({ queryKey: ['summary'] })` calls removed from Dashboard
 - Summary is derived from `allAgreements` data, not a separate query
 
-#### 1.5 — (remaining) Derive FOLIO UI base URL from config
-- Two hardcoded `https://eku.folio.ebsco.com` URLs in `Dashboard.tsx` (lines 268, 369)
-- Should use a helper that derives the UI base URL from `cachedOkapiUrl`
+#### 1.5 — Derived FOLIO UI base URL from config
+- Added `getFolioUiBaseUrl()` to `okapi.ts` — strips `api-` prefix from Okapi URL
+- Both agreement link URLs in Dashboard now use `folioUiBase` prop
+
+#### 2.1 — Removed all `console.log` statements
+- 4 statements removed from `Dashboard.tsx`, `Login.tsx`, `folioApi.ts`
+
+#### 2.2 — Deduplicated fiscal year logic
+- `getCurrentFiscalYear()` now accepts optional `Date` parameter
+- `getFiscalYearFromDate()` delegates to `getCurrentFiscalYear(date)`
+
+#### 2.3 — Consolidated date property helpers
+- Single `getDateProperty()` helper replaces identical `getReviewDate` / `getLastReviewDate`
+- Old names kept as aliases (deprecated) for backward compat
+
+#### 2.4 — Used `getDecisionLabel()` in DecidedTable
+- Replaced manual ternary chain with existing `getDecisionLabel()` helper
+
+#### 2.5 — Fixed sortDecidedAgreements to use last review date
+- Was sorting by next review date (`effectiveReviewDateName`), now uses `effectiveLastReviewName`
+
+#### 2.6 — Added `"type": "module"` to package.json
+- Eliminates ESLint module type warning
+
+#### 2.7 — Removed unused `refreshButtonDisabled` style

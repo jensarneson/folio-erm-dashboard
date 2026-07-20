@@ -56,8 +56,6 @@ export default function Login() {
           tenant: tenant.trim(),
         })
       )
-      console.log('[Login] Logged in to', trimmedUrl, '/', tenant)
-
       navigate('/')
     } catch (err: unknown) {
       if (err instanceof Error) {

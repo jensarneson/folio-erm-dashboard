@@ -156,7 +156,6 @@ async function getAgreements(
   // The ERM API returns { results: [...], totalRecords: N }
   // (not { data: [...] } as the type hint suggested)
   const data = json.results ?? json.data ?? []
-  console.log('[getAgreements] raw json keys:', Object.keys(json), 'totalRecords:', json.totalRecords, 'total:', json.total, 'data.length:', data.length)
   const totalRecords = json.totalRecords ?? json.total ?? data.length ?? 0
 
   return {

@@ -72,6 +72,22 @@ export function getOkapiConfig() {
   return { cachedOkapiUrl, cachedTenant }
 }
 
+/**
+ * Derive the FOLIO UI base URL from the Okapi API URL.
+ * e.g. https://api-eku.folio.ebsco.com → https://eku.folio.ebsco.com
+ * Handles the EBSCO pattern (api- prefix) and generic fallback.
+ */
+export function getFolioUiBaseUrl(): string {
+  if (cachedOkapiUrl.startsWith('/')) {
+    // Dev proxy — use the default UI URL
+    return 'https://eku.folio.ebsco.com'
+  }
+  // Strip protocol, then strip 'api-' prefix if present
+  const withoutProtocol = cachedOkapiUrl.replace(/^https?:\/\//, '')
+  const withoutApi = withoutProtocol.replace(/^api-/, '')
+  return `https://${withoutApi}`
+}
+
 export async function login(credentials: OkapiCredentials): Promise<string> {
   const { username, password, okapiUrl, tenant } = credentials
   cachedOkapiUrl = import.meta.env.DEV ? '/okapi' : okapiUrl
