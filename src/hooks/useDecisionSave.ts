@@ -42,23 +42,6 @@ interface UseDecisionSaveParams {
  *   - Updates renewalPriority refdata field
  *   - Optimistically updates the cache, then invalidates
  */
-
-interface UseDecisionSaveParams {
-  allAgreements: Agreement[] | undefined
-  decisionOptions: { id: string; value: string; label: string }[]
-  reviewDateProp: CustomPropertyDefinition | undefined
-  reviewDecisionProp: CustomPropertyDefinition | undefined
-  lastReviewProp: CustomPropertyDefinition | undefined
-  effectiveReviewDateName: string
-  effectiveReviewDecisionName: string
-  effectiveLastReviewName: string
-  selectedFY: number
-  serverFilter: string | undefined
-}
-
-/**
- * Manage inline decision editing state and the save mutation.
- */
 export function useDecisionSave({
   allAgreements,
   decisionOptions,
