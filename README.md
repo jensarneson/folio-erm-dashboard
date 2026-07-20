@@ -5,7 +5,7 @@ Rubric review queue dashboard for EKU Libraries' FOLIO ERM system.
 ## Features
 
 - Login with FOLIO credentials
-- Summary of agreement review status (total, due, pending, decided)
+- Summary of agreement review status (total, pending, decided)
 - Active review queue sorted by urgency (WATCH items first)
 - Previous decision badges (color-coded)
 - Inline decision form — set RENEW/WATCH/CANCEL with optional notes
@@ -39,35 +39,6 @@ npm run build
 
 Output is in `dist/`. Deploy to any static hosting (GitHub Pages, Netlify, etc.).
 
-## API Endpoints Used
+## Architecture
 
-- `POST /authn/login` — authenticate
-- `GET /erm/custprops` — supplementary property definitions
-- `GET /erm/sas` — agreements (paginated, sorted, filtered)
-- `PUT /erm/sas/:id` — update agreement
-
-### ERM Agreements API
-
-The dashboard uses the FOLIO ERM SAS endpoint with these query parameters:
-
-| Parameter | Value | Purpose |
-|---|---|---|
-| `filters` | `customProperties.<prop>.value isSet` | Only agreements with rubric review set |
-| `sort` | `name;asc` | Sorted by name ascending |
-| `stats` | `true` | Includes `totalRecords` in response |
-| `page` | `1` (1-based) | Page number for pagination |
-| `perPage` | `25` | Items per page |
-
-Example request:
-```
-GET /erm/sas?filters=customProperties.rubricreview.value%20isSet&sort=name%3Basc&stats=true&page=1&perPage=25
-```
-
-The API returns `{ data: [...], totalRecords: N }` — the dashboard uses `totalRecords` to paginate through all results automatically.
-
-### Data Flow
-
-1. **Single fetch** — `getAllAgreements()` paginates through all matching agreements in one query key
-2. **Summary computed client-side** — `computeAgreementSummary()` derives stats from the fetched agreements (no duplicate API call)
-3. **Filtering** — server-side filter reduces payload; client-side filters further narrow to review queue / decided lists
-4. **Caching** — TanStack Query caches results; the Refresh button invalidates all query keys
+See `docs/adr/` for architectural decisions covering project structure, deployment target, API design, authentication, and more.
