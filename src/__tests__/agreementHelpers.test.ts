@@ -9,6 +9,7 @@ const makeAgreement = (overrides: Partial<Agreement> = {}): Agreement => ({
   customProperties: {},
   renewalPriority: { id: 'rp1', value: 'for_review', label: 'For review' },
   orgs: [],
+  _raw: {},
   ...overrides,
 })
 

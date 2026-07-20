@@ -161,7 +161,14 @@ export default function Dashboard() {
       if (!option) throw new Error('Invalid decision value')
 
       const existingCp = agreement.customProperties || {}
+
+      // Start with all existing properties marked _delete: false so they are
+      // preserved. The ERM PUT endpoint deletes any custom property not present
+      // in the payload, so we must include every existing property.
       const updatedCp: Record<string, CustomPropertyValue[]> = {}
+      for (const [key, values] of Object.entries(existingCp)) {
+        updatedCp[key] = values.map((v) => ({ ...v, _delete: false }))
+      }
 
       // Set lastrubricreview to today
       const today = new Date().toISOString().split('T')[0]
@@ -195,13 +202,18 @@ export default function Dashboard() {
       // Advance rubricreview by 3 years for renew/watch, leave as-is for cancel
       if (reviewDateProp) {
         const existingReview = existingCp[effectiveReviewDateName]?.[0]
-        updatedCp[effectiveReviewDateName] = [{
-          id: existingReview?.id,
-          internal: true,
-          value: getNextReviewDate(selectedFY),
-          type: reviewDateProp as unknown as CustomPropertyValue['type'],
-          _delete: false,
-        }]
+        if (option.value === 'cancel') {
+          // Cancelled — don't advance. If a review date exists, the loop above
+          // already copied it with _delete: false, so nothing to do.
+        } else {
+          updatedCp[effectiveReviewDateName] = [{
+            id: existingReview?.id,
+            internal: true,
+            value: getNextReviewDate(selectedFY),
+            type: reviewDateProp as unknown as CustomPropertyValue['type'],
+            _delete: false,
+          }]
+        }
       }
 
       const renewalPriority = getRenewalPriorityFromDecision(option.value)

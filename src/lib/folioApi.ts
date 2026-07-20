@@ -15,25 +15,16 @@ export interface Agreement {
   orgs?: AgreementOrg[]
   contacts?: InternalContact[]
   tags?: Tag[]
-  /** Full agreementStatus object from API response */
   agreementStatus?: { id: string; value: string; label: string }
-  /** Periods array from API response */
   periods?: Array<{
     id: string
     startDate: string
     owner: { id: string }
     periodStatus?: string
   }>
-  /** Cancellation deadline from API response */
   cancellationDeadline?: string | null
-  /** Raw API response metadata for fields not captured above */
-  _metadata?: Record<string, unknown>
-}
-
-export interface ERMResponse<T> {
-  data: T
-  totalRecords?: number
-  _metadata?: Record<string, unknown>
+  /** Full raw API response — used for PUT (complete-object) payloads */
+  _raw: Record<string, unknown>
 }
 
 export interface CustomPropertyValue {
@@ -147,19 +138,24 @@ async function getAgreements(
   })
 
   const json = await okapi.okapiRequest<{
-    results?: Agreement[]
-    data?: Agreement[]
+    results?: Record<string, unknown>[]
+    data?: Record<string, unknown>[]
     totalRecords?: number
     total?: number
   }>(`${AGREEMENTS_ENDPOINT}?${params}`)
 
   // The ERM API returns { results: [...], totalRecords: N }
-  // (not { data: [...] } as the type hint suggested)
-  const data = json.results ?? json.data ?? []
-  const totalRecords = json.totalRecords ?? json.total ?? data.length ?? 0
+  const raw = json.results ?? json.data ?? []
+  const totalRecords = json.totalRecords ?? json.total ?? raw.length ?? 0
+
+  // Attach _raw so buildUpdatePayload can spread the full response
+  const agreements: Agreement[] = (Array.isArray(raw) ? raw : []).map((item) => ({
+    ...(item as unknown as Agreement),
+    _raw: item,
+  }))
 
   return {
-    agreements: Array.isArray(data) ? data : [],
+    agreements,
     totalRecords,
   }
 }
@@ -200,79 +196,54 @@ export async function getAllAgreements(
 // ─── Update Agreement ────────────────────────────────────────────────────────
 
 /**
- * Custom property value for PUT payloads.
- * The ERM API requires _delete flags on custom properties:
- *   - _delete: false  → keep/update this property
- *   - _delete: true   → remove this property
- */
-export interface UpdateCustomPropertyValue {
-  id?: number
-  value: string | number | { id: string; value: string; label: string }
-  internal: boolean
-  note?: string
-  type?: CustomPropertyDefinition
-  _delete: boolean | undefined
-}
-
-/**
  * Full agreement payload for PUT (edit) requests.
- * The ERM SAS API requires the COMPLETE agreement object — not a partial update.
- * All fields present on the agreement must be included in the PUT body.
+ * The ERM SAS API requires the complete agreement object — not a partial update.
+ *
+ * Key difference from GET response:
+ *   - agreementStatus is a string (e.g. "active"), not an object
+ *   - renewalPriority is a string (e.g. "definitely_renew"), not an object
  */
 export interface UpdateAgreementPayload {
-  /** Agreement UUID (required) */
   id: string
-  /** Agreement name */
+  dateCreated?: string
+  agreementContentTypes?: unknown[]
   name: string
-  /** Agreement status object { id, value, label } */
-  agreementStatus: { id: string; value: string; label: string }
-  /** Start date string (YYYY-MM-DD) */
+  orgs?: unknown[]
+  externalLicenseDocs?: unknown[]
+  outwardRelationships?: unknown[]
+  customProperties: Record<string, CustomPropertyValue[]>
+  contacts?: unknown[]
+  tags?: unknown[]
+  lastUpdated?: string
+  inwardRelationships?: unknown[]
   startDate: string
-  /** Cancellation deadline or null */
-  cancellationDeadline: string | null
-  /** Periods array — must include existing period IDs */
+  linkedLicenses?: unknown[]
+  docs?: unknown[]
   periods: Array<{
     id: string
     startDate: string
     owner: { id: string }
     periodStatus?: string
   }>
-  /** Full custom properties with _delete flags */
-  customProperties: Record<string, CustomPropertyValue[]>
-  /** Renewal priority object { id, value, label } or null — must match API format */
-  renewalPriority: { id: string; value: string; label: string } | null
-  /** Agreement content types */
-  agreementContentTypes?: unknown[]
-  /** Organizations */
-  orgs?: unknown[]
-  /** External license docs */
-  externalLicenseDocs?: unknown[]
-  /** Outward relationships */
-  outwardRelationships?: unknown[]
-  /** Inward relationships */
-  inwardRelationships?: unknown[]
-  /** Contacts */
-  contacts?: unknown[]
-  /** Tags */
-  tags?: unknown[]
-  /** Linked licenses */
-  linkedLicenses?: unknown[]
-  /** Docs */
-  docs?: unknown[]
-  /** Usage data providers */
   usageDataProviders?: unknown[]
-  /** Supplementary docs */
+  agreementStatus: string
   supplementaryDocs?: unknown[]
-  /** Alternate names */
+  cancellationDeadline: string | null
   alternateNames?: unknown[]
-  /** Related agreements */
+  version?: number
   relatedAgreements?: unknown[]
+  renewalPriority: string | null
 }
 
 /**
  * Build a full PUT payload from an existing agreement and partial updates.
- * The ERM SAS API requires the complete agreement object on PUT — not a partial update.
- * This helper merges the existing agreement data with the provided updates.
+ *
+ * The ERM SAS PUT endpoint expects a specific shape that differs from the GET
+ * response in two key ways:
+ *   - agreementStatus is a string (e.g. "active"), not an object
+ *   - renewalPriority is a string (e.g. "definitely_renew"), not an object
+ *
+ * This mirrors the payload the FOLIO UI itself sends.
  */
 export function buildUpdatePayload(
   existing: Agreement,
@@ -281,29 +252,33 @@ export function buildUpdatePayload(
     renewalPriority?: { id: string; value: string; label: string } | null
   }
 ): UpdateAgreementPayload {
+  const raw = existing._raw
   return {
     id: existing.id,
+    dateCreated: raw.dateCreated as string | undefined,
+    agreementContentTypes: (raw.agreementContentTypes as unknown[]) ?? [],
     name: existing.name,
-    agreementStatus: existing.agreementStatus ?? { id: '', value: 'active', label: 'Active' },
-    startDate: existing.startDate ?? '',
-    cancellationDeadline: existing.cancellationDeadline ?? null,
-    periods: existing.periods ?? [],
+    orgs: (raw.orgs as unknown[]) ?? [],
+    externalLicenseDocs: (raw.externalLicenseDocs as unknown[]) ?? [],
+    outwardRelationships: (raw.outwardRelationships as unknown[]) ?? [],
     customProperties: updates.customProperties ?? {},
-    renewalPriority: updates.renewalPriority ?? null,
-    agreementContentTypes: existing._metadata?.agreementContentTypes as unknown[] ?? [],
-    orgs: existing._metadata?.orgs as unknown[] ?? [],
-    externalLicenseDocs: existing._metadata?.externalLicenseDocs as unknown[] ?? [],
-    outwardRelationships: existing._metadata?.outwardRelationships as unknown[] ?? [],
-    inwardRelationships: existing._metadata?.inwardRelationships as unknown[] ?? [],
-    contacts: existing._metadata?.contacts as unknown[] ?? [],
-    tags: existing._metadata?.tags as unknown[] ?? [],
-    linkedLicenses: existing._metadata?.linkedLicenses as unknown[] ?? [],
-    docs: existing._metadata?.docs as unknown[] ?? [],
-    usageDataProviders: existing._metadata?.usageDataProviders as unknown[] ?? [],
-    supplementaryDocs: existing._metadata?.supplementaryDocs as unknown[] ?? [],
-    alternateNames: existing._metadata?.alternateNames as unknown[] ?? [],
-    relatedAgreements: existing._metadata?.relatedAgreements as unknown[] ?? [],
-  }
+    contacts: (raw.contacts as unknown[]) ?? [],
+    tags: (raw.tags as unknown[]) ?? [],
+    lastUpdated: raw.lastUpdated as string | undefined,
+    inwardRelationships: (raw.inwardRelationships as unknown[]) ?? [],
+    startDate: existing.startDate ?? '',
+    linkedLicenses: (raw.linkedLicenses as unknown[]) ?? [],
+    docs: (raw.docs as unknown[]) ?? [],
+    periods: existing.periods ?? [],
+    usageDataProviders: (raw.usageDataProviders as unknown[]) ?? [],
+    agreementStatus: existing.agreementStatus?.value ?? 'active',
+    supplementaryDocs: (raw.supplementaryDocs as unknown[]) ?? [],
+    cancellationDeadline: existing.cancellationDeadline ?? null,
+    alternateNames: (raw.alternateNames as unknown[]) ?? [],
+    version: raw.version as number | undefined,
+    relatedAgreements: (raw.relatedAgreements as unknown[]) ?? [],
+    renewalPriority: updates.renewalPriority?.value ?? null,
+  } as UpdateAgreementPayload
 }
 
 export async function updateAgreement(
