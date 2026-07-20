@@ -1,4 +1,4 @@
-import { getOkapiConfig } from '../lib/okapi'
+import { getFolioUiBaseUrl } from '../lib/okapi'
 import type { AgreementOrg } from '../lib/folioApi'
 import styles from './OrganizationLink.module.css'
 
@@ -7,8 +7,7 @@ export function OrganizationLink({ org, roleLabels, isPrimary }: {
   roleLabels?: string
   isPrimary?: boolean
 }) {
-  const { cachedOkapiUrl } = getOkapiConfig()
-  const baseUrl = cachedOkapiUrl.replace(/\/$/, '')
+  const folioUiBase = getFolioUiBaseUrl()
   const orgId = org.org?.orgsUuid || org.org?.id
   const displayName = org.org?.name || org.name || org.id
 
@@ -28,7 +27,7 @@ export function OrganizationLink({ org, roleLabels, isPrimary }: {
 
   return (
     <a
-      href={`${baseUrl}/erm/agreements`}
+      href={`${folioUiBase}/erm/organizations/${orgId}`}
       target="_blank"
       rel="noopener noreferrer"
       className={styles.link}

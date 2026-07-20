@@ -64,7 +64,7 @@ describe('buildUpdatePayload', () => {
     expect(payload.lastUpdated).toBe('2026-07-15T12:00:00Z')
   })
 
-  it('preserves all existing custom properties when updates are provided', () => {
+  it('uses the provided customProperties in the payload', () => {
     const existingCp: Record<string, CustomPropertyValue[]> = {
       rubricreview: [{ id: 1, value: '2026-07-01', internal: true, _delete: false }],
       resourceTier: [{ id: 2, value: 'tier1', internal: true, _delete: false }],
@@ -76,7 +76,8 @@ describe('buildUpdatePayload', () => {
     }
     const payload = buildUpdatePayload(agreement, { customProperties: updatedCp })
 
-    // Only the updated properties are in the payload
+    // buildUpdatePayload passes through whatever customProperties it is given
+    // (preservation of existing properties is the caller's responsibility)
     expect(Object.keys(payload.customProperties)).toContain('rubricscore')
     expect(payload.customProperties.rubricscore).toBeDefined()
   })
