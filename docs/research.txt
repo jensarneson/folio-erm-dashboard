@@ -1,0 +1,337 @@
+Create an Agreement:
+
+HEADERS:
+Request URL
+https://api-eku.folio.ebsco.com/erm/sas
+Request Method
+POST
+Status Code
+201 Created
+Remote Address
+35.168.225.214:443
+Referrer Policy
+same-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://eku.folio.ebsco.com
+content-language
+en-US
+content-type
+application/json;charset=UTF-8
+date
+Sun, 19 Jul 2026 21:12:08 GMT
+location
+http://mod-agreements-b.tsm.folio-eis.us-east-1:8051/erm/sas/670e4392-8f1f-4ba7-a87a-d0fc5d8d3177
+strict-transport-security
+max-age=31536000; includeSubDomains; preload
+vary
+Origin
+vary
+Access-Control-Request-Method
+vary
+Access-Control-Request-Headers
+vary
+Origin
+:authority
+api-eku.folio.ebsco.com
+:method
+POST
+:path
+/erm/sas
+:scheme
+https
+accept
+application/json
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US-u-nu-latn
+content-length
+328
+content-type
+application/json
+cookie
+_ga=GA1.1.1492572814.1774371013; osano_consentmanager_uuid=5dfe08a0-6184-4b6e-a8b3-ec29425d0566; osano_consentmanager=yO7Mt7qU0w3H4P-9ATgPxyovgTlwO36lDisdHw_SWRAvehrbRDhcEkoMHqEADItZ5sEeyBWAV8LyYAcdtCv9RCXnKB6njRZlVzw8fDsg5ptyC3Tmwzq6lbWzYZO2XLiiAU5VSXont-sVsbj20_Cql2bR8IIj_zBiC7yt_dD7EVkxjwgKvZQIZXwugkc-ef592i7QajufLn4jE3VK21L8gO8ImpqcWDEzerNAuQx-S7qNQcICTyh4ltGS4HVgJ5aiFOnT2C3DSdc9HDkehzoCzdAGYfVvK1okG3W4UK9ex3CTMPvQkNETOS8faBowcpKuOtCljMzougk=; _mkto_trk=id:689-LNQ-855&token:_mch-ebsco.com-1781010604343-29091; OptanonAlertBoxClosed=2026-06-09T13:10:06.561Z; _gcl_au=1.1.408736347.1781010607; _fbp=fb.1.1781010606892.382345378291973131; AMP_MKTG_f28a28777d=JTdCJTIycmVmZXJyZXIlMjIlM0ElMjJodHRwcyUzQSUyRiUyRnd3dy5nb29nbGUuY29tJTJGJTIyJTJDJTIycmVmZXJyaW5nX2RvbWFpbiUyMiUzQSUyMnd3dy5nb29nbGUuY29tJTIyJTdE; _hjSessionUser_1322543=eyJpZCI6IjJlMTY3N2U5LTI5NmMtNTg1Yy05OGE1LWRiM2Y2OWZhODM2YiIsImNyZWF0ZWQiOjE3ODEwMTA2MDY4NjcsImV4aXN0aW5nIjp0cnVlfQ==; AMP_7fa6965955=JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjJhMjMzNzhiOC04M2E2LTQzM2YtOWRmYy1kNjUzNmI3OGFjN2MlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzgxNTI3NTU1NTIyJTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc4MTUyNzU5MDQ4NyUyQyUyMmxhc3RFdmVudElkJTIyJTNBMTglMkMlMjJwYWdlQ291bnRlciUyMiUzQTAlMkMlMjJjb29raWVEb21haW4lMjIlM0ElMjIuZWJzY28uY29tJTIyJTdE; OptanonConsent=isGpcEnabled=0&datestamp=Thu+Jun+18+2026+09%3A18%3A36+GMT-0400+(Eastern+Daylight+Time)&version=202604.2.0&browserGpcFlag=0&isIABGlobal=false&hosts=&consentId=351d84fd-62c2-45e5-80c8-a5034d1b9b60&interactionCount=2&isAnonUser=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&intType=1&geolocation=US%3BKY&AwaitingReconsent=false&isDntEnabled=0&prevHadToken=0&fclco=&crTime=1781010606869; _ga_W7FLZWNQJH=GS2.1.s1781788716$o3$g1$t1781788730$j46$l0$h0; AMP_f28a28777d=JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjIxMTQ5NjRmMy04MWU4LTRiODAtODJmNi00YTlkZTUzMGNjZDAlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzgxNzg4NzE2Mjc4JTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc4MTc4ODg5OTE3MiUyQyUyMmxhc3RFdmVudElkJTIyJTNBMTUlMkMlMjJwYWdlQ291bnRlciUyMiUzQTElMkMlMjJjb29raWVEb21haW4lMjIlM0ElMjIuZWJzY28uY29tJTIyJTdE; _ga_9LWD5JYMB9=GS2.1.s1781788715$o3$g1$t1781788899$j60$l0$h0; _ga_JCC3266R9Y=GS2.1.s1784475998$o5$g0$t1784475998$j60$l0$h0; folioAccessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJIb2V4cHVvVnM4aHk2MkthUE1uX0JzQ0k2SlJGaWYwdHoxTDNra21uY3IwIn0.eyJleHAiOjE3ODQ0OTU1NzUsImlhdCI6MTc4NDQ5NDk3NSwianRpIjoib25sdHJ0OjQ5ODJlMzYwLTZkN2UtZjUyNC1lNGU3LTQ3MWVmODcwMGRhMyIsImlzcyI6Imh0dHBzOi8va2V5Y2xvYWstZWt1LmZvbGlvLmVic2NvLmNvbS9yZWFsbXMvZnMwMDAwMTIyNCIsInN1YiI6ImplbnMuYXJuZXNvbkBla3UuZWR1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZnMwMDAwMTIyNC1hcHBsaWNhdGlvbiIsInNpZCI6ImNmOUFLZWY3dnJTbVlVOExSYmcyQzB1YSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJ1c2VyX2lkIjoiMTlmMWU2MTUtZTFmMi00Zjk4LTk5NWQtODVmNzg4MmJmNzE5In0.2-IbS78ml4QeWGDNuixvXP_8D1BsdXxWXwnZQyJfqOCP669XtIZuh26d_wdObpN-tOQ6ruesR-iEuV6u38CzLhrIH8Sqq9CFOxmYJVtv2i5XOx54matrDzo37WMH8Dg0rjCq8wJI5kriPuG2B0xqlLK69sqo4USnM6UND9AlDw2fIO_7HNeXmMSQD_TVLyjwuhaHhPvFFf_N9s4RDltJi5Qr4gId0e273H18yQW6cABgkbTNJiZ3uNpkZ-HKUq18qA84fzZjRcyrCJz1IobhfM-xH7XhkeH2dN9ag0cEeicQxcNNorj8LHzd8FohAdPgps2-9uRFfnczcaLTEux7QQ
+origin
+https://eku.folio.ebsco.com
+priority
+u=1, i
+sec-ch-ua
+"Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Linux"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-site
+user-agent
+Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36
+x-okapi-tenant
+fs00001224
+
+
+
+PAYLOAD:
+{"periods":[{"startDate":"2026-07-01"}],"customProperties":{"lastrubricreview":[{"_delete":true}],"rubricreview":[{"_delete":false,"value":"2026-07-01"}],"rubricscore":[{"_delete":true}],"resourceTier":[{"_delete":true}]},"name":"Test ERM Agreement","agreementStatus":"active","outwardRelationships":[],"inwardRelationships":[]}
+
+
+RESPONSE:
+{
+    "id": "670e4392-8f1f-4ba7-a87a-d0fc5d8d3177",
+    "dateCreated": "2026-07-19T21:12:08Z",
+    "name": "Test ERM Agreement",
+    "outwardRelationships": [],
+    "customProperties": {
+        "rubricreview": [
+            {
+                "id": 4032,
+                "internal": true,
+                "value": "2026-07-01",
+                "type": {
+                    "id": "2c91809f9e7363ab019ea8a7132f0000",
+                    "retired": false,
+                    "ctx": "Rubric Review",
+                    "name": "rubricreview",
+                    "primary": true,
+                    "defaultInternal": true,
+                    "label": "Next Rubric Review",
+                    "description": "Date of next comprehensive rubric review",
+                    "weight": 0,
+                    "type": "com.k_int.web.toolkit.custprops.types.CustomPropertyLocalDate"
+                }
+            }
+        ]
+    },
+    "lastUpdated": "2026-07-19T21:12:08Z",
+    "inwardRelationships": [],
+    "startDate": "2026-07-01",
+    "periods": [
+        {
+            "id": "4dca4a4f-f2af-4b1b-9aa9-21bbb81fcacd",
+            "startDate": "2026-07-01",
+            "owner": {
+                "id": "670e4392-8f1f-4ba7-a87a-d0fc5d8d3177"
+            },
+            "periodStatus": "current"
+        }
+    ],
+    "agreementStatus": {
+        "id": "2c91808b8fa48399019034ba4f7f0017",
+        "value": "active",
+        "label": "Active"
+    },
+    "cancellationDeadline": null,
+    "alternateNames": [],
+    "version": 0
+}
+
+Edit an Agreement:
+Request URL
+https://api-eku.folio.ebsco.com/erm/sas/670e4392-8f1f-4ba7-a87a-d0fc5d8d3177
+Request Method
+PUT
+Status Code
+200 OK
+Remote Address
+35.168.225.214:443
+Referrer Policy
+same-origin
+access-control-allow-credentials
+true
+access-control-allow-origin
+https://eku.folio.ebsco.com
+content-language
+en-US
+content-type
+application/json;charset=UTF-8
+date
+Sun, 19 Jul 2026 21:15:36 GMT
+location
+http://mod-agreements-b.tsm.folio-eis.us-east-1:8051/erm/sas/670e4392-8f1f-4ba7-a87a-d0fc5d8d3177
+strict-transport-security
+max-age=31536000; includeSubDomains; preload
+vary
+Origin
+vary
+Access-Control-Request-Method
+vary
+Access-Control-Request-Headers
+vary
+Origin
+:authority
+api-eku.folio.ebsco.com
+:method
+PUT
+:path
+/erm/sas/670e4392-8f1f-4ba7-a87a-d0fc5d8d3177
+:scheme
+https
+accept
+application/json
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US-u-nu-latn
+content-length
+1279
+content-type
+application/json
+cookie
+_ga=GA1.1.1492572814.1774371013; osano_consentmanager_uuid=5dfe08a0-6184-4b6e-a8b3-ec29425d0566; osano_consentmanager=yO7Mt7qU0w3H4P-9ATgPxyovgTlwO36lDisdHw_SWRAvehrbRDhcEkoMHqEADItZ5sEeyBWAV8LyYAcdtCv9RCXnKB6njRZlVzw8fDsg5ptyC3Tmwzq6lbWzYZO2XLiiAU5VSXont-sVsbj20_Cql2bR8IIj_zBiC7yt_dD7EVkxjwgKvZQIZXwugkc-ef592i7QajufLn4jE3VK21L8gO8ImpqcWDEzerNAuQx-S7qNQcICTyh4ltGS4HVgJ5aiFOnT2C3DSdc9HDkehzoCzdAGYfVvK1okG3W4UK9ex3CTMPvQkNETOS8faBowcpKuOtCljMzougk=; _mkto_trk=id:689-LNQ-855&token:_mch-ebsco.com-1781010604343-29091; OptanonAlertBoxClosed=2026-06-09T13:10:06.561Z; _gcl_au=1.1.408736347.1781010607; _fbp=fb.1.1781010606892.382345378291973131; AMP_MKTG_f28a28777d=JTdCJTIycmVmZXJyZXIlMjIlM0ElMjJodHRwcyUzQSUyRiUyRnd3dy5nb29nbGUuY29tJTJGJTIyJTJDJTIycmVmZXJyaW5nX2RvbWFpbiUyMiUzQSUyMnd3dy5nb29nbGUuY29tJTIyJTdE; _hjSessionUser_1322543=eyJpZCI6IjJlMTY3N2U5LTI5NmMtNTg1Yy05OGE1LWRiM2Y2OWZhODM2YiIsImNyZWF0ZWQiOjE3ODEwMTA2MDY4NjcsImV4aXN0aW5nIjp0cnVlfQ==; AMP_7fa6965955=JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjJhMjMzNzhiOC04M2E2LTQzM2YtOWRmYy1kNjUzNmI3OGFjN2MlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzgxNTI3NTU1NTIyJTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc4MTUyNzU5MDQ4NyUyQyUyMmxhc3RFdmVudElkJTIyJTNBMTglMkMlMjJwYWdlQ291bnRlciUyMiUzQTAlMkMlMjJjb29raWVEb21haW4lMjIlM0ElMjIuZWJzY28uY29tJTIyJTdE; OptanonConsent=isGpcEnabled=0&datestamp=Thu+Jun+18+2026+09%3A18%3A36+GMT-0400+(Eastern+Daylight+Time)&version=202604.2.0&browserGpcFlag=0&isIABGlobal=false&hosts=&consentId=351d84fd-62c2-45e5-80c8-a5034d1b9b60&interactionCount=2&isAnonUser=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&intType=1&geolocation=US%3BKY&AwaitingReconsent=false&isDntEnabled=0&prevHadToken=0&fclco=&crTime=1781010606869; _ga_W7FLZWNQJH=GS2.1.s1781788716$o3$g1$t1781788730$j46$l0$h0; AMP_f28a28777d=JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjIxMTQ5NjRmMy04MWU4LTRiODAtODJmNi00YTlkZTUzMGNjZDAlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzgxNzg4NzE2Mjc4JTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc4MTc4ODg5OTE3MiUyQyUyMmxhc3RFdmVudElkJTIyJTNBMTUlMkMlMjJwYWdlQ291bnRlciUyMiUzQTElMkMlMjJjb29raWVEb21haW4lMjIlM0ElMjIuZWJzY28uY29tJTIyJTdE; _ga_9LWD5JYMB9=GS2.1.s1781788715$o3$g1$t1781788899$j60$l0$h0; _ga_JCC3266R9Y=GS2.1.s1784475998$o5$g0$t1784475998$j60$l0$h0; folioAccessToken=eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJIb2V4cHVvVnM4aHk2MkthUE1uX0JzQ0k2SlJGaWYwdHoxTDNra21uY3IwIn0.eyJleHAiOjE3ODQ0OTYxNDQsImlhdCI6MTc4NDQ5NTU0NCwianRpIjoib25sdHJ0OjI0NmRjOGE0LWFkNTctYzhkMC1lNjdkLTJmZjgwMWQzNzNjNyIsImlzcyI6Imh0dHBzOi8va2V5Y2xvYWstZWt1LmZvbGlvLmVic2NvLmNvbS9yZWFsbXMvZnMwMDAwMTIyNCIsInN1YiI6ImplbnMuYXJuZXNvbkBla3UuZWR1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiZnMwMDAwMTIyNC1hcHBsaWNhdGlvbiIsInNpZCI6ImNmOUFLZWY3dnJTbVlVOExSYmcyQzB1YSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJ1c2VyX2lkIjoiMTlmMWU2MTUtZTFmMi00Zjk4LTk5NWQtODVmNzg4MmJmNzE5In0.WxHQEVPOaGYWi3XDXyuNPPZclWMK3QcIORzH7ozNrWCEH87K3SFIrinz9dl89QJfTGqh81ZZIfobXTk1Hm6qvKnpeqeJEaAi3wiTG4fBpRcUUGTCwwGdA3h_BukPOmfCzTlqF3MtTKWIlYzpEUZjc4F-RlB-okB64W13Rnf1ptqIuaGN_TxmF3Bt-wgl3nzGUT1S66IHd8rgx2tiXQ1_Gf1OM-cduU12V8qyNZPj05zith6ef9n7o9hRCdY3YA3ZWf02gZ4qVw5uT3WKjt7fmYbX_Esm9VESArTRmluq9KKQFV2FRDxBraqpVa-kOwj0Qsj9Ehmf7sZgg8fTp5WfDQ
+origin
+https://eku.folio.ebsco.com
+priority
+u=1, i
+sec-ch-ua
+"Not;A=Brand";v="8", "Chromium";v="150", "Google Chrome";v="150"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Linux"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-site
+user-agent
+Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36
+x-okapi-tenant
+fs00001224
+
+Payload:
+{"id":"670e4392-8f1f-4ba7-a87a-d0fc5d8d3177","dateCreated":"2026-07-19T21:12:08Z","agreementContentTypes":[],"name":"Test ERM Agreement","orgs":[],"externalLicenseDocs":[],"outwardRelationships":[],"customProperties":{"lastrubricreview":[{"_delete":false,"value":"2026-07-19"}],"rubricreview":[{"id":4032,"internal":true,"value":"2029-07-01","type":{"id":"2c91809f9e7363ab019ea8a7132f0000","retired":false,"ctx":"Rubric Review","name":"rubricreview","primary":true,"defaultInternal":true,"label":"Next Rubric Review","description":"Date of next comprehensive rubric review","weight":0,"type":"com.k_int.web.toolkit.custprops.types.CustomPropertyLocalDate"},"_delete":false}],"rubricscore":[{"_delete":false,"value":"renew","note":"| RENEW FY27"}],"resourceTier":[{"_delete":true}]},"contacts":[],"tags":[],"lastUpdated":"2026-07-19T21:12:08Z","inwardRelationships":[],"startDate":"2026-07-01","linkedLicenses":[],"docs":[],"periods":[{"id":"4dca4a4f-f2af-4b1b-9aa9-21bbb81fcacd","startDate":"2026-07-01","owner":{"id":"670e4392-8f1f-4ba7-a87a-d0fc5d8d3177"},"periodStatus":"current"}],"usageDataProviders":[],"agreementStatus":"active","supplementaryDocs":[],"cancellationDeadline":null,"alternateNames":[],"version":0,"relatedAgreements":[],"renewalPriority":"definitely_renew"}
+
+RESPONSE:
+{
+    "id": "670e4392-8f1f-4ba7-a87a-d0fc5d8d3177",
+    "dateCreated": "2026-07-19T21:12:08Z",
+    "agreementContentTypes": [],
+    "name": "Test ERM Agreement",
+    "orgs": [],
+    "externalLicenseDocs": [],
+    "outwardRelationships": [],
+    "customProperties": {
+        "rubricreview": [
+            {
+                "id": 4032,
+                "internal": true,
+                "value": "2029-07-01",
+                "type": {
+                    "id": "2c91809f9e7363ab019ea8a7132f0000",
+                    "retired": false,
+                    "ctx": "Rubric Review",
+                    "name": "rubricreview",
+                    "primary": true,
+                    "defaultInternal": true,
+                    "label": "Next Rubric Review",
+                    "description": "Date of next comprehensive rubric review",
+                    "weight": 0,
+                    "type": "com.k_int.web.toolkit.custprops.types.CustomPropertyLocalDate"
+                }
+            }
+        ],
+        "lastrubricreview": [
+            {
+                "id": 4033,
+                "internal": true,
+                "value": "2026-07-19",
+                "type": {
+                    "id": "2c91809f9e7363ab019f4cd4f7560007",
+                    "retired": false,
+                    "ctx": "Rubric Review",
+                    "name": "lastrubricreview",
+                    "primary": true,
+                    "defaultInternal": true,
+                    "label": "Last Rubric Review",
+                    "description": "Date of most recent rubric review",
+                    "weight": 0,
+                    "type": "com.k_int.web.toolkit.custprops.types.CustomPropertyLocalDate"
+                }
+            }
+        ],
+        "rubricscore": [
+            {
+                "id": 4034,
+                "note": "| RENEW FY27",
+                "internal": true,
+                "value": {
+                    "id": "2c91808d9e7350a6019eb27cb0070002",
+                    "value": "renew",
+                    "label": "RENEW"
+                },
+                "type": {
+                    "id": "2c91809f9e7363ab019eb27e500d0003",
+                    "retired": false,
+                    "ctx": "Rubric Review",
+                    "name": "rubricscore",
+                    "primary": true,
+                    "category": {
+                        "id": "2c91808d9e7350a6019eb27c8d260001",
+                        "desc": "RubricScore",
+                        "internal": false,
+                        "values": [
+                            {
+                                "id": "2c91809f9e7363ab019eb27cde030002",
+                                "value": "cancel",
+                                "label": "CANCEL"
+                            },
+                            {
+                                "id": "2c91808d9e7350a6019eb27cb0070002",
+                                "value": "renew",
+                                "label": "RENEW"
+                            },
+                            {
+                                "id": "2c91809f9e7363ab019eb27cc7640001",
+                                "value": "watch",
+                                "label": "WATCH"
+                            }
+                        ]
+                    },
+                    "defaultInternal": true,
+                    "label": "Rubric Review Decision",
+                    "description": "Rubric decision based on score",
+                    "weight": 1,
+                    "type": "com.k_int.web.toolkit.custprops.types.CustomPropertyRefdata"
+                }
+            }
+        ]
+    },
+    "contacts": [],
+    "tags": [],
+    "lastUpdated": "2026-07-19T21:15:36Z",
+    "inwardRelationships": [],
+    "renewalPriority": {
+        "id": "2c91808b8fa48399019034ba4f23000e",
+        "value": "definitely_renew",
+        "label": "Definitely renew"
+    },
+    "startDate": "2026-07-01",
+    "linkedLicenses": [],
+    "docs": [],
+    "periods": [
+        {
+            "id": "4dca4a4f-f2af-4b1b-9aa9-21bbb81fcacd",
+            "startDate": "2026-07-01",
+            "owner": {
+                "id": "670e4392-8f1f-4ba7-a87a-d0fc5d8d3177"
+            },
+            "periodStatus": "current"
+        }
+    ],
+    "usageDataProviders": [],
+    "agreementStatus": {
+        "id": "2c91808b8fa48399019034ba4f7f0017",
+        "value": "active",
+        "label": "Active"
+    },
+    "supplementaryDocs": [],
+    "cancellationDeadline": null,
+    "alternateNames": [],
+    "version": 1
+}
