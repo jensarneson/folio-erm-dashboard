@@ -28,10 +28,13 @@ Authentication uses FOLIO's `/authn/login` endpoint:
 ```
 login() → okapiToken (valid ~16h) + refreshToken
   │
-  ├─ okapiToken expires → okapiRequest() detects 401 → refreshToken() → retry
+  ├─ page reload → tokens restored from localStorage → session survives ✅
+  │
+  ├─ okapiToken expires → okapiRequest() detects 401 → refreshToken() → retry ✅
   │
   ├─ refreshToken expires → refreshToken() tries in-memory credentials → retry
-  │  (only works if user logged in during current session and hasn't reloaded)
+  │  (only works if user logged in during current session and hasn't reloaded,
+  │  since password is not persisted)
   │
   └─ in-memory credentials unavailable → clearToken() → dispatch folio-auth-expired
        → Dashboard redirects to /login
@@ -39,7 +42,9 @@ login() → okapiToken (valid ~16h) + refreshToken
 
 ## Key Design Decisions
 
-- **Password is never persisted** — it lives only in `cachedCredentials` (memory). After a page reload, the re-login fallback is unavailable and the user must re-authenticate manually.
+- **Password is never persisted** — it lives only in `cachedCredentials` (memory). After a page reload, the re-login fallback (password-based) is unavailable, but the user stays authenticated via the restored tokens from localStorage.
+- **Tokens survive page reload** — both `okapiToken` and `refreshToken` are persisted in localStorage and restored on module load. The user remains authenticated across reloads as long as at least one token is still valid.
+- **Manual re-login is only required when both tokens have expired** — if the access token expired and the refresh token also expired, and the user has reloaded (losing the in-memory password), they must log in again.
 - **`clearToken()` clears everything** — tokens, refresh token, and the non-sensitive credentials from localStorage. This ensures a clean logout state.
 - **Okapi URL and tenant are defaults** — provided by `getDefaultOkapiConfig()` from `src/lib/okapi.ts`. The login form only exposes username and password fields.
 
@@ -50,7 +55,7 @@ login() → okapiToken (valid ~16h) + refreshToken
 - **Positive:** Re-login fallback works within the same session (password in memory)
 - **Positive:** Password is never written to disk/localStorage
 - **Positive:** `clearToken()` provides a complete logout (no stale credentials)
-- **Negative:** After page reload, refresh-token expiry requires manual re-login (no password in localStorage)
+- **Negative:** If both tokens expire and the user has reloaded (losing the in-memory password), manual re-login is required
 - **Negative:** Okapi URL and tenant are default-configured (not user-entered) — simpler UX but less portable
 
 ## Testing
