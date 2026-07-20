@@ -42,3 +42,7 @@ Output is in `dist/`. Deploy to any static hosting (GitHub Pages, Netlify, etc.)
 ## Architecture
 
 See `docs/adr/` for architectural decisions covering project structure, deployment target, API design, authentication, and more.
+
+## Note
+
+This project was developed with the assistance of generative AI tools. All code was reviewed and tested by the maintainer before deployment.
