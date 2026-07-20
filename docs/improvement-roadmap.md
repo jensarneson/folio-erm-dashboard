@@ -25,9 +25,9 @@
 
 ## Phase 3 — Maintainability (Nice-to-have)
 
-- [ ] **3.1** Extract Dashboard sub-components into `src/components/` directory
-- [ ] **3.2** Move inline styles to CSS modules
-- [ ] **3.3** Consolidate or remove one-off debug scripts in `scripts/`
+- [x] **3.1** Extract Dashboard sub-components into `src/components/` directory
+- [x] **3.2** Move inline styles to CSS modules
+- [x] **3.3** Consolidate or remove one-off debug scripts in `scripts/`
 - [ ] **3.4** Strengthen `Agreement` type — reduce reliance on `_metadata` casts
 
 ## Phase 4 — Hardening (Future)
@@ -85,3 +85,20 @@
 - Eliminates ESLint module type warning
 
 #### 2.7 — Removed unused `refreshButtonDisabled` style
+
+### 2025-07-20 — Phase 3: Maintainability
+
+#### 3.1 — Extracted 6 sub-components into `src/components/`
+- `SummaryCards`, `DecisionForm`, `OrganizationLink`, `OrganizationCell`,
+  `ReviewQueueTable`, `DecidedTable`
+- Dashboard.tsx reduced from ~1050 lines to 394
+
+#### 3.2 — Converted all inline styles to CSS modules
+- 8 `.module.css` files created
+- Zero inline `style={}` objects remaining in components
+- Added CSS module type declarations to `vite-env.d.ts`
+
+#### 3.3 — Removed 7 one-off debug scripts
+- Kept only `scripts/auth.ts` (referenced in docs)
+- Removed: `check-env.ts`, `check-response.ts`, `debug.ts`,
+  `test-all-custprops.ts`, `test-custprops.ts`, `test-fetch.ts`, `test-getall.ts`
