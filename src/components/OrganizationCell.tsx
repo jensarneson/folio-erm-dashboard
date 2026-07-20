@@ -2,6 +2,10 @@ import { type ReactNode } from 'react'
 import { OrganizationLink } from './OrganizationLink'
 import type { AgreementOrg } from '../lib/folioApi'
 
+/**
+ * Format an array of agreement organizations into linked spans.
+ * Primary org is sorted first. Returns '—' when empty.
+ */
 export function formatOrgs(orgs?: AgreementOrg[]): ReactNode {
   if (!orgs || orgs.length === 0) return '—'
 

@@ -1,5 +1,8 @@
 import styles from './DecisionForm.module.css'
 
+/**
+ * Inline form for setting a review decision: select + optional note + save/cancel buttons.
+ */
 export default function DecisionForm({
   decisionValue,
   setDecisionValue,

@@ -8,38 +8,49 @@ import { getCurrentFiscalYear } from './utils'
 //   3. Extract the value (string or { value: string } object)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Extract a string value from a custom property, or null if not set */
-export function getCustomPropertyString(
+/**
+ * Internal helper: extract the string value from the first element of a
+ * custom property array. Custom property values can be a plain string or
+ * a refdata object `{ id, value, label }`.
+ *
+ * @param defaultValue – returned when the property is absent or empty
+ */
+function extractCustomPropertyValue(
   agreement: Agreement,
-  propName: string
+  propName: string,
+  defaultValue: string | null,
 ): string | null {
   const props = agreement.customProperties
-  if (!props) return null
+  if (!props) return defaultValue
   const values = props[propName]
-  if (!values || values.length === 0) return null
+  if (!values || values.length === 0) return defaultValue
   const raw = values[0]?.value
   if (typeof raw === 'string') return raw
   if (typeof raw === 'object' && raw !== null && 'value' in raw) {
     return (raw as { value: string }).value
   }
-  return null
+  return defaultValue
 }
 
-/** Extract a decision value (string) from a custom property */
+/**
+ * Extract a string value from a custom property, or `null` if not set.
+ */
+export function getCustomPropertyString(
+  agreement: Agreement,
+  propName: string,
+): string | null {
+  return extractCustomPropertyValue(agreement, propName, null)
+}
+
+/**
+ * Extract a decision value (string) from a custom property.
+ * Returns `''` when the property is absent or empty.
+ */
 export function getDecisionValue(
   agreement: Agreement,
-  propName: string
+  propName: string,
 ): string {
-  const props = agreement.customProperties
-  if (!props) return ''
-  const values = props[propName]
-  if (!values || values.length === 0) return ''
-  const raw = values[0]?.value
-  if (typeof raw === 'string') return raw
-  if (typeof raw === 'object' && raw !== null && 'value' in raw) {
-    return (raw as { value: string }).value
-  }
-  return ''
+  return extractCustomPropertyValue(agreement, propName, '') ?? ''
 }
 
 // ─── Property Discovery ──────────────────────────────────────────────────────
@@ -89,12 +100,17 @@ export function getFiscalYearFromDate(date: Date): number {
 
 // ─── Decision Helpers ────────────────────────────────────────────────────────
 
+/** Human-readable labels and CSS colors for each decision value. */
 export const DECISION_LABELS: Record<string, { label: string; color: string }> = {
   watch: { label: 'WATCH', color: 'var(--color-warning)' },
   renew: { label: 'RENEW', color: 'var(--color-success)' },
   cancel: { label: 'CANCEL', color: 'var(--color-danger)' },
 }
 
+/**
+ * Return the display label and color for a decision value.
+ * Falls back to empty strings for unknown values.
+ */
 export function getDecisionLabel(decision: string): { label: string; color: string } {
   return DECISION_LABELS[decision] ?? { label: '', color: '' }
 }

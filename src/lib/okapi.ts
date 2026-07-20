@@ -1,8 +1,19 @@
 // FOLIO Okapi API client
 
 // Default to EKU tenant for easy testing
-const OKAPI_URL = import.meta.env.DEV ? '/okapi' : (import.meta.env.VITE_OKAPI_URL || 'https://api-eku.folio.ebsco.com')
-const TENANT = import.meta.env.VITE_TENANT || 'fs00001224'
+const DEFAULT_OKAPI_URL = import.meta.env.DEV ? '/okapi' : (import.meta.env.VITE_OKAPI_URL || 'https://api-eku.folio.ebsco.com')
+const DEFAULT_TENANT = import.meta.env.VITE_TENANT || 'fs00001224'
+
+/**
+ * Return the default Okapi URL and tenant for the login form.
+ * In dev mode the URL is `/okapi` (proxied by Vite).
+ */
+export function getDefaultOkapiConfig(): { okapiUrl: string; tenant: string } {
+  return { okapiUrl: DEFAULT_OKAPI_URL, tenant: DEFAULT_TENANT }
+}
+
+const OKAPI_URL = DEFAULT_OKAPI_URL
+const TENANT = DEFAULT_TENANT
 
 export interface OkapiCredentials {
   username: string
@@ -52,12 +63,14 @@ try {
   // Ignore storage errors
 }
 
-export function setOkapiConfig(config: OkapiConfig) {
+/**
+ * Update the Okapi connection config (URL and tenant).
+ * In dev mode the URL is always forced to `/okapi` for the proxy.
+ * Does not touch credentials — use `login()` for that.
+ */
+export function setOkapiConfig(config: OkapiConfig): void {
   cachedOkapiUrl = import.meta.env.DEV ? '/okapi' : config.okapiUrl
   cachedTenant = config.tenant
-  if (config.username) {
-    cachedCredentials = { ...config, password: '' } as OkapiCredentials
-  }
   try {
     localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify({
       okapiUrl: config.okapiUrl,
@@ -68,8 +81,11 @@ export function setOkapiConfig(config: OkapiConfig) {
   }
 }
 
-export function getOkapiConfig() {
-  return { cachedOkapiUrl, cachedTenant }
+/**
+ * Return the current Okapi connection config.
+ */
+export function getOkapiConfig(): { okapiUrl: string; tenant: string } {
+  return { okapiUrl: cachedOkapiUrl, tenant: cachedTenant }
 }
 
 /**
@@ -88,6 +104,12 @@ export function getFolioUiBaseUrl(): string {
   return `https://${withoutApi}`
 }
 
+/**
+ * Authenticate against the FOLIO Okapi server.
+ * Stores the access token, refresh token, and full credentials (including
+ * password in memory) for automatic re-authentication on token expiry.
+ * Returns the access token on success.
+ */
 export async function login(credentials: OkapiCredentials): Promise<string> {
   const { username, password, okapiUrl, tenant } = credentials
   cachedOkapiUrl = import.meta.env.DEV ? '/okapi' : okapiUrl
@@ -140,30 +162,44 @@ export async function login(credentials: OkapiCredentials): Promise<string> {
   return data.okapiToken
 }
 
+/**
+ * Return the current access token, or null if not authenticated.
+ */
 export function getToken(): string | null {
   return cachedToken
 }
 
+/**
+ * Clear all stored tokens and credentials, logging the user out.
+ */
 export function clearToken(): void {
   cachedToken = null
   cachedRefreshToken = null
+  cachedCredentials = null
   try {
     localStorage.removeItem(TOKEN_STORAGE_KEY)
     localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY)
+    localStorage.removeItem(CREDENTIALS_STORAGE_KEY)
   } catch {
     // Ignore storage errors
   }
 }
 
 /**
- * Refresh the okapiToken using the stored refreshToken.
- * Returns the new okapiToken, or null if refresh failed.
+ * Attempt to refresh the access token.
+ *
+ * Priority order:
+ *   1. Use stored refreshToken via /authn/refresh
+ *   2. Fall back to cached credentials (password must be present)
+ *   3. Return null (caller should redirect to login)
  */
 async function refreshToken(): Promise<string | null> {
   const token = cachedRefreshToken
   if (!token) {
-    // No refresh token — fall back to re-login if credentials exist
-    if (cachedCredentials) {
+    // No refresh token — fall back to re-login if full credentials exist
+    // (password must be present; it is only available when the user logged
+    // in during the current session and has not refreshed the page).
+    if (cachedCredentials?.password) {
       return login({
         username: cachedCredentials.username,
         password: cachedCredentials.password,
@@ -184,9 +220,9 @@ async function refreshToken(): Promise<string | null> {
   })
 
   if (!response.ok) {
-    // Refresh failed — clear tokens and fall back to re-login
+    // Refresh token expired — clear it and try cached credentials
     clearToken()
-    if (cachedCredentials) {
+    if (cachedCredentials?.password) {
       return login({
         username: cachedCredentials.username,
         password: cachedCredentials.password,
@@ -215,10 +251,19 @@ async function refreshToken(): Promise<string | null> {
   return data.okapiToken
 }
 
-// Generic API request helper
+/**
+ * Generic FOLIO Okapi API request helper.
+ *
+ * Automatically attaches the auth token and tenant header. On 401, attempts
+ * a single token refresh and retries the request. Dispatches a
+ * `folio-auth-expired` event on permanent auth failure.
+ *
+ * @param path – API path (e.g. `/erm/sas`)
+ * @param options – Standard fetch `RequestInit` options
+ */
 async function okapiRequest<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   let token = getToken()
   if (!token) {

@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { login, setOkapiConfig } from '../lib/okapi'
+import { login, setOkapiConfig, getDefaultOkapiConfig } from '../lib/okapi'
 import styles from './Login.module.css'
 
+/**
+ * Login page for the FOLIO ERM Dashboard.
+ * Authenticates via Okapi and redirects to the dashboard on success.
+ */
 export default function Login() {
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
@@ -10,8 +14,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const okapiUrl = import.meta.env.DEV ? '/okapi' : 'https://api-eku.folio.ebsco.com'
-  const tenant = 'fs00001224'
+  const { okapiUrl, tenant } = getDefaultOkapiConfig()
 
   // Load saved username from localStorage
   useEffect(() => {

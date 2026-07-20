@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   updateAgreement,
@@ -8,11 +8,40 @@ import {
   type CustomPropertyValue,
 } from '../lib/folioApi'
 
-const RENEWAL_PRIORITY_MAP: Record<string, { id: string; value: string; label: string }> = {
-  renew: { id: '2c91808b8fa48399019034ba4f23000e', value: 'definitely_renew', label: 'Definitely renew' },
-  watch: { id: '2c91808b8fa48399019034ba4f23000f', value: 'for_review', label: 'For review' },
-  cancel: { id: '2c91808b8fa48399019034ba4f230010', value: 'definitely_cancel', label: 'Definitely cancel' },
+/**
+ * Map decision values to the corresponding FOLIO renewal-priority refdata values.
+ * Only the `.value` string is sent to the API — the id/label are for the optimistic cache.
+ */
+const RENEWAL_PRIORITY_BY_DECISION: Record<string, { id: string; value: string; label: string }> = {
+  renew: { id: '', value: 'definitely_renew', label: 'Definitely renew' },
+  watch: { id: '', value: 'for_review', label: 'For review' },
+  cancel: { id: '', value: 'definitely_cancel', label: 'Definitely cancel' },
 }
+
+interface UseDecisionSaveParams {
+  allAgreements: Agreement[] | undefined
+  decisionOptions: { id: string; value: string; label: string }[]
+  reviewDateProp: CustomPropertyDefinition | undefined
+  reviewDecisionProp: CustomPropertyDefinition | undefined
+  lastReviewProp: CustomPropertyDefinition | undefined
+  effectiveReviewDateName: string
+  effectiveReviewDecisionName: string
+  effectiveLastReviewName: string
+  selectedFY: number
+  serverFilter: string | undefined
+}
+
+/**
+ * Manage inline decision editing state and the save mutation.
+ *
+ * On save:
+ *   - Preserves all existing custom properties (PUT requires full object)
+ *   - Sets lastrubricreview to today
+ *   - Appends FY decision note with history
+ *   - Advances rubricreview by 3 years for renew/watch
+ *   - Updates renewalPriority refdata field
+ *   - Optimistically updates the cache, then invalidates
+ */
 
 interface UseDecisionSaveParams {
   allAgreements: Agreement[] | undefined
@@ -46,16 +75,24 @@ export function useDecisionSave({
   const [editingId, setEditingId] = useState<string | null>(null)
   const [decisionValue, setDecisionValue] = useState('')
   const [note, setNote] = useState('')
-  const [saving, setSaving] = useState(false)
   const [savingAgreementId, setSavingAgreementId] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  /**
+   * Check if a specific agreement is currently being saved.
+   */
+  const saving = savingAgreementId !== null
 
   const handleSaveDecision = async (agreementId: string) => {
-    if (!decisionValue || !editingId) return
-    setSaving(true)
+    if (!decisionValue || editingId !== agreementId) {
+      return
+    }
+
+    setSaveError(null)
     setSavingAgreementId(agreementId)
 
     try {
-      const agreement = allAgreements?.find((a) => a.id === editingId)
+      const agreement = allAgreements?.find((a) => a.id === agreementId)
       if (!agreement) throw new Error('Agreement not found')
 
       const option = decisionOptions.find((o) => o.value === decisionValue)
@@ -113,7 +150,7 @@ export function useDecisionSave({
         }
       }
 
-      const renewalPriority = RENEWAL_PRIORITY_MAP[option.value]
+      const renewalPriority = RENEWAL_PRIORITY_BY_DECISION[option.value]
       const updatedPayload = buildUpdatePayload(agreement, {
         customProperties: updatedCp,
         renewalPriority: renewalPriority ?? null,
@@ -126,7 +163,7 @@ export function useDecisionSave({
         const updatedAgreement = {
           ...agreement,
           customProperties: updatedCp,
-          renewalPriority: RENEWAL_PRIORITY_MAP[option.value],
+          renewalPriority: renewalPriority,
         }
         const updatedAll = allAgreements.map((a) =>
           a.id === agreementId ? updatedAgreement : a,
@@ -141,12 +178,16 @@ export function useDecisionSave({
       await queryClient.invalidateQueries({ queryKey: ['all-agreements'] })
     } catch (err) {
       console.error('Failed to save decision:', err)
-      alert(`Failed to save: ${(err as Error).message}`)
+      setSaveError((err as Error).message || 'Failed to save decision')
     } finally {
-      setSaving(false)
       setSavingAgreementId(null)
     }
   }
+
+  /**
+   * Clear the save error (e.g. after user dismisses it).
+   */
+  const clearSaveError = useCallback(() => setSaveError(null), [])
 
   return {
     editingId,
@@ -157,6 +198,9 @@ export function useDecisionSave({
     setNote,
     saving,
     savingAgreementId,
+    saveError,
+    clearSaveError,
     handleSaveDecision,
   }
+
 }

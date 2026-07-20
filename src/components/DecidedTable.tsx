@@ -3,6 +3,9 @@ import { formatOrgs } from './OrganizationCell'
 import type { Agreement } from '../lib/folioApi'
 import styles from './DecidedTable.module.css'
 
+/**
+ * Read-only table of agreements that already have a decision recorded for the selected FY.
+ */
 export default function DecidedTable({
   sortedDecided,
   effectiveLastReviewName,

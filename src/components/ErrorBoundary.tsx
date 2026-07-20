@@ -11,6 +11,10 @@ interface State {
   error: Error | null
 }
 
+/**
+ * Fallback UI shown when the error boundary catches a rendering error.
+ * Offers page reload or re-login options.
+ */
 function ErrorFallback({ error }: { error: Error | null }) {
   const navigate = useNavigate()
 
@@ -40,6 +44,10 @@ function ErrorFallback({ error }: { error: Error | null }) {
   )
 }
 
+/**
+ * React error boundary that catches rendering errors anywhere in the tree
+ * and displays a user-friendly fallback with reload/re-login options.
+ */
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null }
 

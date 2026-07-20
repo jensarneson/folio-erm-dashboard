@@ -4,6 +4,10 @@ import { getReviewDate, getDecisionValue, getDecisionLabel } from '../lib/agreem
 import type { Agreement } from '../lib/folioApi'
 import styles from './ReviewQueueTable.module.css'
 
+/**
+ * Table of agreements pending rubric review.
+ * Each row shows agreement details and an inline decision form triggered by "Set decision".
+ */
 export default function ReviewQueueTable({
   sortedQueue,
   editingId,
@@ -18,6 +22,8 @@ export default function ReviewQueueTable({
   effectiveReviewDecisionName,
   decisionOptions,
   savingAgreementId,
+  saveError,
+  clearSaveError,
   folioUiBase,
 }: {
   sortedQueue: Agreement[]
@@ -33,10 +39,18 @@ export default function ReviewQueueTable({
   effectiveReviewDecisionName: string
   decisionOptions: { id: string; value: string; label: string }[]
   savingAgreementId: string | null
+  saveError: string | null
+  clearSaveError: () => void
   folioUiBase: string
 }) {
   return (
     <div className={styles.tableContainer}>
+      {saveError && (
+        <div className={styles.saveError}>
+          {saveError}
+          <button className={styles.saveErrorDismiss} onClick={clearSaveError}>Dismiss</button>
+        </div>
+      )}
       <table className={styles.table}>
         <thead>
           <tr>

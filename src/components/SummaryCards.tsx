@@ -1,5 +1,8 @@
 import styles from './SummaryCards.module.css'
 
+/**
+ * Display three summary stat cards: total agreements, pending decisions, and decisions made.
+ */
 export default function SummaryCards({
   totalAgreements,
   pendingDecisions,

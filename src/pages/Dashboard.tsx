@@ -11,6 +11,13 @@ import ReviewQueueTable from '../components/ReviewQueueTable'
 import DecidedTable from '../components/DecidedTable'
 import styles from './Dashboard.module.css'
 
+/**
+ * Main dashboard page.
+ *
+ * Orchestrates property discovery, fiscal year selection, agreement fetching,
+ * and inline decision editing. Shows summary cards, the review queue table,
+ * and a decided-agreements table.
+ */
 export default function Dashboard() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -69,6 +76,8 @@ export default function Dashboard() {
     setNote,
     saving,
     savingAgreementId,
+    saveError,
+    clearSaveError,
     handleSaveDecision,
   } = useDecisionSave({
     allAgreements,
@@ -200,6 +209,8 @@ export default function Dashboard() {
             effectiveReviewDecisionName={effectiveReviewDecisionName}
             decisionOptions={decisionOptions}
             savingAgreementId={savingAgreementId}
+            saveError={saveError}
+            clearSaveError={clearSaveError}
             folioUiBase={folioUiBase}
           />
         )}
