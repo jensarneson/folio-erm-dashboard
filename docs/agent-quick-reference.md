@@ -6,10 +6,6 @@ The app authenticates entirely through the browser login page. Users enter their
 FOLIO credentials and the token is stored in `localStorage`. No server-side auth
 or CLI scripts are needed.
 
-For API testing outside the browser, make direct `fetch()` calls to the Okapi
-gateway — the `login()` function in `src/lib/okapi.ts` works in any environment
-with `fetch` and `localStorage` (or a polyfill).
-
 ## Key Files
 
 | File | Purpose |
@@ -17,7 +13,8 @@ with `fetch` and `localStorage` (or a polyfill).
 | `src/lib/okapi.ts` | Auth, token management, `okapiRequest()` |
 | `src/lib/folioApi.ts` | ERM API calls (`getAgreements`, `getAllAgreements`, `getCustprops`) |
 | `src/lib/agreementHelpers.ts` | Client-side filtering logic |
-| `src/pages/Dashboard.tsx` | Main dashboard with `useQuery` hooks |
+| `src/hooks/` | Custom hooks (`useFiscalYear`, `usePropertyDiscovery`, `useAgreements`, `useDecisionSave`) |
+| `src/pages/Dashboard.tsx` | Render layer — wires hooks together |
 | `.env` | Non-sensitive defaults (Okapi URL, tenant) |
 
 ## Token Refresh
@@ -35,4 +32,3 @@ No manual token management needed in API calls.
 - Filter syntax: `filters=customProperties.rubricreview.value%20isSet`
 - Pagination: `page` (1-based) + `perPage`
 - Stats: `stats=true` returns `totalRecords` in response
-- Use `perPage=50` for fewer round-trips (confirmed working)
