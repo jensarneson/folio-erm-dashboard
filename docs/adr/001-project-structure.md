@@ -12,8 +12,7 @@ The project uses:
 - **Vite** as the build tool and dev server
 - **TanStack Query** for server state management and caching
 - **React Router** for client-side routing
-- **Axios** (installed) for HTTP requests (via the `okapiRequest` wrapper)
-- **date-fns** for date manipulation
+- **fetch API** for HTTP requests (via the `okapiRequest` wrapper)
 - **CSS custom properties** for theming (no CSS framework)
 
 The project is a standalone SPA, not a FOLIO Stripes module.
