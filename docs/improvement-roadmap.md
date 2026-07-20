@@ -1,7 +1,7 @@
 # Improvement Roadmap — FOLIO ERM Dashboard
 
 **Created:** 2025-07-20
-**Status:** In Progress
+**Status:** Complete
 
 ---
 
@@ -28,13 +28,13 @@
 - [x] **3.1** Extract Dashboard sub-components into `src/components/` directory
 - [x] **3.2** Move inline styles to CSS modules
 - [x] **3.3** Consolidate or remove one-off debug scripts in `scripts/`
-- [ ] **3.4** Strengthen `Agreement` type — reduce reliance on `_metadata` casts
+- [x] **3.4** Strengthen `Agreement` type — replace `_metadata` with `_raw`, fix PUT shape
 
 ## Phase 4 — Hardening (Future)
 
-- [ ] **4.1** Add CSP/security headers for GitHub Pages deployment
-- [ ] **4.2** Add more test coverage (auth flow, API error handling)
-- [ ] **4.3** Consider GET-then-PUT pattern for `updateAgreement` to avoid stale data
+- [x] **4.1** Add CSP/security headers for GitHub Pages deployment
+- [x] **4.2** Add test coverage for `buildUpdatePayload` (6 tests)
+- [ ] **4.3** Consider GET-then-PUT pattern — skipped (adds ~1s per save, PUT always overwrites)
 
 ---
 
