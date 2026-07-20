@@ -4,6 +4,7 @@ import {
   updateAgreement,
   buildUpdatePayload,
   type Agreement,
+  type CustomPropertyDefinition,
   type CustomPropertyValue,
 } from '../lib/folioApi'
 
@@ -16,9 +17,9 @@ const RENEWAL_PRIORITY_MAP: Record<string, { id: string; value: string; label: s
 interface UseDecisionSaveParams {
   allAgreements: Agreement[] | undefined
   decisionOptions: { id: string; value: string; label: string }[]
-  reviewDateProp: { id: string; name: string; label: string } | undefined
-  reviewDecisionProp: { id: string; name: string; label: string } | undefined
-  lastReviewProp: { id: string; name: string; label: string } | undefined
+  reviewDateProp: CustomPropertyDefinition | undefined
+  reviewDecisionProp: CustomPropertyDefinition | undefined
+  lastReviewProp: CustomPropertyDefinition | undefined
   effectiveReviewDateName: string
   effectiveReviewDecisionName: string
   effectiveLastReviewName: string
@@ -76,7 +77,7 @@ export function useDecisionSave({
           id: existingCp[effectiveLastReviewName]?.[0]?.id,
           internal: true,
           value: today,
-          type: lastReviewProp as unknown as CustomPropertyValue['type'],
+          type: lastReviewProp,
           _delete: false,
         }]
       }
@@ -94,7 +95,7 @@ export function useDecisionSave({
         internal: true,
         value: { id: option.id, value: option.value, label: option.label },
         note: fullNote,
-        type: reviewDecisionProp as unknown as CustomPropertyValue['type'],
+        type: reviewDecisionProp,
         _delete: false,
       }]
 
@@ -106,7 +107,7 @@ export function useDecisionSave({
             id: existingReview?.id,
             internal: true,
             value: `${selectedFY + 2}-07-01`,
-            type: reviewDateProp as unknown as CustomPropertyValue['type'],
+            type: reviewDateProp,
             _delete: false,
           }]
         }
